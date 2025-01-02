@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오디오 주파수 퀴즈</title>
-    <link rel="stylesheet" href="styles.css"> <!-- 별도의 CSS 파일 연결 -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
@@ -27,10 +27,12 @@
         });
 
         function generateQuiz() {
+            // 문제 업데이트
             correctFrequency = frequencies[Math.floor(Math.random() * frequencies.length)];
             const optionsContainer = document.getElementById('options');
             optionsContainer.innerHTML = '';
 
+            // 버튼 생성
             frequencies.sort((a, b) => a - b).forEach(freq => {
                 const button = document.createElement('button');
                 button.textContent = `${freq} Hz`;
@@ -49,10 +51,13 @@
             if (selectedFrequency === correctFrequency) {
                 result.textContent = "정답입니다! 🎉";
                 result.style.color = "green";
+
+                // 문제는 바로 업데이트하지만 메시지는 유지 후 지움
                 setTimeout(() => {
-                    resetButtonColors();
-                    result.textContent = '';
-                    generateQuiz();
+                    generateQuiz(); // 새 문제 생성
+                }, 500); // 0.5초 후 새 문제 생성
+                setTimeout(() => {
+                    result.textContent = ''; // 메시지는 1초간 유지 후 지움
                 }, 1000);
             } else {
                 result.textContent = "틀렸습니다. 다시 시도하세요! 😢";
@@ -60,12 +65,8 @@
             }
         }
 
-        function resetButtonColors() {
-            const buttons = document.querySelectorAll('#options button');
-            buttons.forEach(btn => btn.classList.remove('selected'));
-        }
-
         function playSound(frequency) {
+            if (!frequency) return; // 보호 로직: 주파수 값이 없으면 실행하지 않음
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
             oscillator.type = 'sine';
@@ -75,7 +76,7 @@
             setTimeout(() => oscillator.stop(), 2000);
         }
 
-        generateQuiz();
+        generateQuiz(); // 초기 문제 생성
     </script>
 </body>
 </html>
